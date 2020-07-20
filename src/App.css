@@ -11,9 +11,31 @@
 
 .app__header {
   /* prevent logo from stretching */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   object-fit: contain;
   background-color: #fff;
   padding: 1.5vh;
   border: 1px solid #dbdbdb;
   margin-bottom: 3vh;
+  align-items: center;
 }
+
+.header__logInBtn {
+  background-color: #0095f6 !important;
+  text-transform: capitalize !important;
+}
+
+/* Material Ui over-rides */
+
+.MuiButton-textPrimary {
+  color: #0095f6 !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+  font-family: "Montserrat", sans-serif !important;
+  letter-spacing: 0.4px !important;
+  font-size: 14px !important;
+}
+
+/* End of over-rides */

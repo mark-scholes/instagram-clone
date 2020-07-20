@@ -2,10 +2,10 @@ import React from "react";
 import "../Post.css";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
-import ShareIcon from "@material-ui/icons/Share";
+import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
 import Avatar from "@material-ui/core/Avatar";
 
-const Post = ({ imgUrl, postDesc, username }) => {
+const Post = ({ imgUrl, postDesc, username, likes }) => {
   return (
     <div className="post">
       <div className="post__header">
@@ -20,9 +20,9 @@ const Post = ({ imgUrl, postDesc, username }) => {
       <section className="post__icons">
         <FavoriteBorderIcon />
         <ChatBubbleOutlineIcon />
-        <ShareIcon />
+        <SendOutlinedIcon />
       </section>
-      <p className="post__text">likes 0</p>
+      <p className="post__text">{likes} likes</p>
       <h4 className="post__text">
         <span className="post__profileName">{username}</span> {postDesc}
       </h4>
