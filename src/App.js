@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Modal from "@material-ui/core/Modal";
+
 import Post from "./components/Post";
+import Modals from "./components/Modals";
 import Header from "./components/Header";
 import { db, auth } from "./firebase";
 import "./App.css";
-import { Input, Button } from "@material-ui/core";
 
 const App = () => {
   //styles
@@ -68,17 +68,6 @@ const App = () => {
     };
   }, [user, username]);
 
-  useEffect(() => {
-    db.collection("posts").onSnapshot((snapshot) => {
-      setPosts(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          post: doc.data(),
-        }))
-      );
-    });
-  }, []);
-
   const signUp = (e) => {
     e.preventDefault();
     auth
@@ -93,6 +82,17 @@ const App = () => {
   };
 
   //End of User authentication
+
+  useEffect(() => {
+    db.collection("posts").onSnapshot((snapshot) => {
+      setPosts(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          post: doc.data(),
+        }))
+      );
+    });
+  }, []);
 
   const logOut = () => {
     auth.signOut();
@@ -116,76 +116,20 @@ const App = () => {
         setOpenSignIn={setOpenSignIn}
         signIn={signIn}
       />
-
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <div style={modalStyle} className={classes.paper}>
-          <form className="LogInForm__form">
-            <center>
-              <img
-                className="app_headerImg"
-                src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
-                alt="instagram logo"
-              />
-            </center>
-            <Input
-              required
-              placeholder="username"
-              type="text"
-              value={username}
-              onChange={(e) => handleChange(e)}
-            />
-            <Input
-              required
-              placeholder="email"
-              type="text"
-              value={email}
-              onChange={(e) => handleChange(e)}
-            />
-            <Input
-              required
-              placeholder="password"
-              type="password"
-              value={password}
-              onChange={(e) => handleChange(e)}
-            />
-
-            <Button onClick={signUp} type="submit">
-              Sign Up
-            </Button>
-          </form>
-        </div>
-      </Modal>
-      <Modal open={openSignIn} onClose={() => setOpenSignIn(false)}>
-        <div style={modalStyle} className={classes.paper}>
-          <form className="LogInForm__form">
-            <center>
-              <img
-                className="app_headerImg"
-                src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
-                alt="instagram logo"
-              />
-            </center>
-            <Input
-              required
-              placeholder="email"
-              type="text"
-              value={email}
-              onChange={(e) => handleChange(e)}
-            />
-            <Input
-              required
-              placeholder="password"
-              type="password"
-              value={password}
-              onChange={(e) => handleChange(e)}
-            />
-
-            <Button type="submit" onClick={signIn}>
-              Log In
-            </Button>
-          </form>
-        </div>
-      </Modal>
+      <Modals
+        open={open}
+        setOpen={setOpen}
+        openSignIn={openSignIn}
+        setOpenSignIn={setOpenSignIn}
+        modalStyle={modalStyle}
+        classes={classes}
+        username={username}
+        handleChange={handleChange}
+        email={email}
+        password={password}
+        signUp={signUp}
+        signIn={signIn}
+      />
 
       {posts.map(({ post, id }) => (
         <Post
