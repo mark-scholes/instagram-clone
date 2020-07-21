@@ -3,9 +3,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Post from "./components/Post";
 import Header from "./components/Header";
-import LogInForm from "./components/LogInForm";
-import { db } from "./firebase";
+import { db, auth } from "./firebase";
 import "./App.css";
+import { Input, Button } from "@material-ui/core";
 
 const App = () => {
   //styles
@@ -35,20 +35,45 @@ const App = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [user, setUser] = useState(null);
+  const [openSignIn, setOpenSignIn] = useState(false);
   //end of state
 
-  const body = (
-    <div style={modalStyle} className={classes.paper}>
-      <LogInForm
-        username={username}
-        email={email}
-        password={password}
-        setUsername={(e) => setUsername}
-        setEmail={(e) => setEmail}
-        setPassword={setPassword}
-      />
-    </div>
-  );
+  //form handling
+  const handleChange = (e) => {
+    e.preventDefault();
+    let field = e.target.placeholder;
+    let value = e.target.value;
+    field === "username" && setUsername(value);
+    field === "email" && setEmail(value);
+    field === "password" && setPassword(value);
+  };
+  //end of form handling
+
+  //User authentication
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        console.log(authUser);
+        setUser(authUser);
+        if (authUser.displayName) {
+          // don't update username
+        } else {
+          //if this is a new user
+          return authUser.updateProfile({
+            displayName: username,
+          });
+        }
+      } else {
+        setUser(null);
+      }
+    });
+    return () => {
+      //perform cleanup before it is fired again.
+      unsubscribe();
+    };
+  }, [username, user]);
 
   useEffect(() => {
     db.collection("posts").onSnapshot((snapshot) => {
@@ -60,14 +85,112 @@ const App = () => {
       );
     });
   }, []);
+
+  const signUp = (e) => {
+    e.preventDefault();
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        return authUser.user.updateProfile({
+          displayName: username,
+        });
+      })
+      .catch((err) => alert(err.message));
+    setOpen(false);
+  };
+
+  //End of User authentication
+
+  const logOut = () => {
+    auth.signOut();
+    setUser(null);
+    console.log("arse");
+  };
+
+  const signIn = (e) => {
+    e.preventDefault();
+    auth.signInWithEmailAndPassword(email, password).catch((err) => {
+      alert(err);
+    });
+    setOpenSignIn(false);
+  };
+
   return (
     <div className="App">
-      <Header setOpen={setOpen} />
-      <div>
-        <Modal open={open} onClose={() => setOpen(false)}>
-          {body}
-        </Modal>
-      </div>
+      <Header
+        setOpen={setOpen}
+        user={user}
+        logOut={logOut}
+        setOpenSignIn={setOpenSignIn}
+      />
+
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <div style={modalStyle} className={classes.paper}>
+          <form className="LogInForm__form">
+            <center>
+              <img
+                className="app_headerImg"
+                src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
+                alt="instagram logo"
+              />
+            </center>
+            <Input
+              required
+              placeholder="username"
+              type="text"
+              value={username}
+              onChange={(e) => handleChange(e)}
+            />
+            <Input
+              required
+              placeholder="email"
+              type="text"
+              value={email}
+              onChange={(e) => handleChange(e)}
+            />
+            <Input
+              required
+              placeholder="password"
+              type="password"
+              value={password}
+              onChange={(e) => handleChange(e)}
+            />
+
+            <Button onClick={signUp} type="submit">
+              Sign Up
+            </Button>
+          </form>
+        </div>
+      </Modal>
+      <Modal open={openSignIn} onClose={() => setOpenSignIn(false)}>
+        <div style={modalStyle} className={classes.paper}>
+          <form className="LogInForm__form">
+            <center>
+              <img
+                className="app_headerImg"
+                src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
+                alt="instagram logo"
+              />
+            </center>
+            <Input
+              required
+              placeholder="email"
+              type="text"
+              value={email}
+              onChange={(e) => handleChange(e)}
+            />
+            <Input
+              required
+              placeholder="password"
+              type="password"
+              value={password}
+              onChange={(e) => handleChange(e)}
+            />
+
+            <Button type="submit">Log In</Button>
+          </form>
+        </div>
+      </Modal>
 
       {posts.map(({ post, id }) => (
         <Post

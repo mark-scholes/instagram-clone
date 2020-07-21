@@ -1,7 +1,8 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
+import { auth } from "../firebase";
 
-const Header = ({ setOpen }) => {
+const Header = ({ setOpen, user, logOut, setOpenSignIn }) => {
   return (
     <div className="app__header">
       <div>
@@ -17,14 +18,27 @@ const Header = ({ setOpen }) => {
           variant="contained"
           color="primary"
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => setOpenSignIn(true)}
         >
           Log In
         </Button>
-
-        <Button color="primary" className="header__signUpBtn">
-          Sign up
-        </Button>
+        {user ? (
+          <Button
+            color="primary"
+            className="header__signUpBtn"
+            onClick={() => logOut()}
+          >
+            Log Out
+          </Button>
+        ) : (
+          <Button
+            color="primary"
+            className="header__signUpBtn"
+            onClick={() => setOpen(true)}
+          >
+            Sign Up
+          </Button>
+        )}
       </div>
     </div>
   );
