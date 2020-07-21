@@ -55,25 +55,18 @@ const App = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
-        console.log(authUser);
+        //user is logged in
         setUser(authUser);
-        if (authUser.displayName) {
-          // don't update username
-        } else {
-          //if this is a new user
-          return authUser.updateProfile({
-            displayName: username,
-          });
-        }
       } else {
+        //user has logged out
         setUser(null);
       }
     });
     return () => {
-      //perform cleanup before it is fired again.
+      //if the useEffect fires again perform some cleanup so multiple listeners aren't in place at once
       unsubscribe();
     };
-  }, [username, user]);
+  }, [user, username]);
 
   useEffect(() => {
     db.collection("posts").onSnapshot((snapshot) => {
@@ -104,13 +97,12 @@ const App = () => {
   const logOut = () => {
     auth.signOut();
     setUser(null);
-    console.log("arse");
   };
 
   const signIn = (e) => {
     e.preventDefault();
-    auth.signInWithEmailAndPassword(email, password).catch((err) => {
-      alert(err);
+    auth.signInWithEmailAndPassword(email, password).catch((error) => {
+      alert(error);
     });
     setOpenSignIn(false);
   };
@@ -122,6 +114,7 @@ const App = () => {
         user={user}
         logOut={logOut}
         setOpenSignIn={setOpenSignIn}
+        signIn={signIn}
       />
 
       <Modal open={open} onClose={() => setOpen(false)}>
@@ -187,7 +180,9 @@ const App = () => {
               onChange={(e) => handleChange(e)}
             />
 
-            <Button type="submit">Log In</Button>
+            <Button type="submit" onClick={signIn}>
+              Log In
+            </Button>
           </form>
         </div>
       </Modal>
