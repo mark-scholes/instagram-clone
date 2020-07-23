@@ -16,7 +16,7 @@
   justify-content: space-between;
   object-fit: contain;
   background-color: #fff;
-  padding: 1.5vh;
+  padding: 1.5vh 30vw;
   border: 1px solid #dbdbdb;
   margin-bottom: 3vh;
   align-items: center;
@@ -38,15 +38,32 @@
   font-size: 14px !important;
 }
 
-.LogInForm__form {
+.Modals__form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
 }
 
-.center {
+.app__footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background-color: #fff;
+  padding: 1.5vh 5vw;
+  border: 1px solid #dbdbdb;
+}
+
+.FooterNave__div {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.MuiSvgIcon-root {
+  fill: #848385 !important;
+  cursor: pointer;
+}
+.MuiSvgIcon-root:hover {
+  fill: #000 !important;
 }

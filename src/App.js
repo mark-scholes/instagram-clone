@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-
 import Post from "./components/Post";
 import Modals from "./components/Modals";
 import Header from "./components/Header";
+import FooterNav from "./components/FooterNav";
+
 import { db, auth } from "./firebase";
 import "./App.css";
 
 const App = () => {
   //styles
 
-  const getModalStyle = () => {
-    const top = 50;
-    const left = 50;
-  };
+  const getModalStyle = () => {};
 
   const useStyles = makeStyles((theme) => ({
     paper: {
       position: "absolute",
-      width: 400,
+      left: "50%",
+      top: "30%",
+      transform: "translate(-50%)",
+      width: "40vw",
+      height: "50vh",
+
       backgroundColor: theme.palette.background.paper,
       border: "2px solid #000",
       boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3),
+      padding: theme.spacing(5, 6, 6),
+      display: "flex",
+      flexDirection: "column",
     },
   }));
   //end of styles
@@ -37,6 +42,10 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [user, setUser] = useState(null);
   const [openSignIn, setOpenSignIn] = useState(false);
+  const [postDescription, setPostDescription] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [image, setImage] = useState("");
+  const [fileModalOpen, setFileModalOpen] = useState(false);
   //end of state
 
   //form handling
@@ -47,7 +56,9 @@ const App = () => {
     field === "username" && setUsername(value);
     field === "email" && setEmail(value);
     field === "password" && setPassword(value);
+    field === "Post Description" && setPostDescription(value);
   };
+
   //end of form handling
 
   //User authentication
@@ -107,6 +118,15 @@ const App = () => {
     setOpenSignIn(false);
   };
 
+  const handleFileChange = (e) => {
+    //check to see if e.target has an array of files and there is one file at least in it
+    //then set image in state as the first file in that array
+    //this prevents issues if people try to multi upload
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
   return (
     <div className="App">
       <Header
@@ -129,6 +149,16 @@ const App = () => {
         password={password}
         signUp={signUp}
         signIn={signIn}
+        fileModalOpen={fileModalOpen}
+        setFileModalOpen={setFileModalOpen}
+        postDescription={postDescription}
+        handleFileChange={handleFileChange}
+        image={image}
+        setProgress={setProgress}
+        progress={progress}
+        user={user}
+        setPostDescription={setPostDescription}
+        setImage={setImage}
       />
 
       {posts.map(({ post, id }) => (
@@ -140,6 +170,10 @@ const App = () => {
           key={id}
         />
       ))}
+
+      <footer className="app__footer">
+        <FooterNav setFileModalOpen={setFileModalOpen} />
+      </footer>
     </div>
   );
 };

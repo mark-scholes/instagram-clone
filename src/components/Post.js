@@ -27,7 +27,11 @@ const Post = ({ imgUrl, postDesc, username, likes }) => {
         <span className="post__profileName">{username}</span> {postDesc}
       </h4>
       <section>Comments</section>
-      <input type="text" placeholder="Add a comment" />
+      <input
+        className="Post__commentBox"
+        type="text"
+        placeholder="Add a comment"
+      />
     </div>
   );
 };
