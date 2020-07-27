@@ -3,6 +3,7 @@ import Modal from "@material-ui/core/Modal";
 import { Input, Button } from "@material-ui/core";
 import { db, storage } from "../firebase";
 import firebase from "firebase/app";
+import "../Modals.css";
 
 const Modals = ({
   open,
@@ -27,6 +28,7 @@ const Modals = ({
   user,
   setPostDescription,
   setImage,
+  likes,
 }) => {
   const handleUpload = (e) => {
     // get a ref from storage db for a new folder called images
@@ -64,6 +66,7 @@ const Modals = ({
               postDesc: postDescription,
               imgUrl: url,
               username: user.displayName,
+              likes: likes,
             });
             setProgress(0);
             setPostDescription("");
@@ -79,8 +82,12 @@ const Modals = ({
         <>
           <Modal open={fileModalOpen} onClose={() => setFileModalOpen(false)}>
             <div style={modalStyle} className={classes.paper}>
-              <div className="Modals__form">
-                <progress value={progress} max="100"></progress>
+              <div className="Modals__form Modals__imageUpload">
+                <progress
+                  className="Modals__progress"
+                  value={progress}
+                  max="100"
+                ></progress>
                 <Input
                   type="text"
                   value={postDescription}

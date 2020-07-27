@@ -46,6 +46,7 @@ const App = () => {
   const [progress, setProgress] = useState(0);
   const [image, setImage] = useState("");
   const [fileModalOpen, setFileModalOpen] = useState(false);
+  const [likes, setLikes] = useState(0);
   //end of state
 
   //form handling
@@ -95,14 +96,16 @@ const App = () => {
   //End of User authentication
 
   useEffect(() => {
-    db.collection("posts").onSnapshot((snapshot) => {
-      setPosts(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          post: doc.data(),
-        }))
-      );
-    });
+    db.collection("posts")
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) => {
+        setPosts(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            post: doc.data(),
+          }))
+        );
+      });
   }, []);
 
   const logOut = () => {
@@ -159,6 +162,7 @@ const App = () => {
         user={user}
         setPostDescription={setPostDescription}
         setImage={setImage}
+        likes={likes}
       />
 
       {posts.map(({ post, id }) => (
@@ -168,6 +172,8 @@ const App = () => {
           username={post.username}
           likes={post.likes}
           key={id}
+          postId={id}
+          user={user}
         />
       ))}
 
